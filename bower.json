@@ -1,0 +1,21 @@
+{
+  "name": "mg-side-menu",
+  "version": "1.0.0",
+  "homepage": "https://github.com/possible819/mg-side-menu",
+  "authors": [
+    "Jay Lee <jaylee.possible@gmail.com>"
+  ],
+  "description": "polymer mg-side-menu component",
+  "main": "mg-side-menu.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "polymer/polymer#^1.9.2"
+  }
+}

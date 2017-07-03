@@ -1,0 +1,145 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="mg-side-menu">
+	<template>
+		<style>
+			#header-btn {
+				position: absolute;
+				top: 0;
+				left: 0;
+				z-index: 200;
+			}
+			#side-menu-container {
+				position: absolute;
+				z-index: 100;
+				background: white;
+				border: solid;
+				border-width: 1px;
+				height: 177.4vh;
+				width: 70%;
+				left: -100%;
+				top: 0;
+				animation-duration: 0.5s;			
+			}
+			#modal {
+				position: absolute;
+				left: 0;
+				top: 0;
+				z-index: 99;
+				width: 100%;
+				height: 100%;
+				background-color: #000000;
+				opacity: 0.5;
+			}
+			@keyframes slide {
+				from {
+					left: -100%;
+				}
+				to {
+					left: 0%;
+				}
+			}
+			@keyframes slide-back {
+				from {
+					left: 0%;
+				}
+				to {
+					left: -100;
+				}
+			}
+		</style>
+		<div id="side-menu-container" opened="[[opened]]" on-tap="sideMenuToggle"></div>
+		<div id="modal" hidden on-tap="sideMenuToggle"></div>
+	</template>
+	<script>
+		Polymer({
+			is: 'mg-side-menu',
+
+			properties: {
+				/**
+				 * side menu opened or not
+				 * @type Boolean
+				 */
+				opened: {
+					type: Boolean,
+					value: false
+				},
+
+				/**
+				 * menu element name
+				 * menu-element로 전달 받은 element를 생성하여 메뉴 리스트에 append 함
+				 * @type String
+				 */
+				menuElement: {
+					type: String,
+					observer: '_menuElementChanged'
+				}
+			},
+
+			/**
+			 * mg-side-menu-toggle event listener를 등록함
+			 * 사이드 메뉴를 컨트롤할 버튼을 커스터마이징 하도록 구현되어 있음
+			 */
+			ready: function(event) {
+				document.addEventListener('mg-side-menu-toggle', function() {
+					this.sideMenuToggle();
+				}.bind(this));
+			},
+
+			/**
+			 * menuElement의 값이 변경되면 호출하여 element를 생성하고 append
+			 * @param  String menuElement
+			 */
+			_menuElementChanged: function(menuElement) {
+				var menuElement = document.createElement(menuElement);
+				this.$['side-menu-container'].appendChild(menuElement);
+			},
+
+			/**
+			 * opened의 값에 따라 사이드 메뉴를 open / close
+			 */
+			sideMenuToggle: function() {
+				if(this.opened) {
+					this.closeSideMenu();
+					this.modalOff();
+				} else {
+					this.openSideMenu();
+					this.modalOn();
+				}
+			},
+
+			/**
+			 * 사이드 메뉴를 open하는 animation을 활성화
+			 */
+			openSideMenu: function() {
+				this.$['side-menu-container'].style.animationName = 'slide';
+				this.$['side-menu-container'].style.left = '0';
+				this.opened = true;
+			},
+
+			/**
+			 * 사이드 메뉴를 close하는 animation을 활성화
+			 */
+			closeSideMenu: function() {
+				this.$['side-menu-container'].style.animationName = 'slide-back';
+				this.$['side-menu-container'].style.left = '-100%';
+				this.opened = false;
+			},
+
+			/**
+			 * modal on
+			 */
+			modalOn: function() {
+				this.$['modal'].removeAttribute('hidden');
+				
+			},
+
+			/**
+			 * modal off
+			 */
+			modalOff: function() {
+				this.$['modal'].setAttribute('hidden', true);				
+			}
+		})
+	</script>
+</dom-module>
