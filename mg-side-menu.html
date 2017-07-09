@@ -69,7 +69,7 @@
 				to {
 					right: -100;
 				}
-			}			
+			}
 		</style>
 		<div id="side-menu-container" class$="[[containerClass]]" opened="[[opened]]" on-tap="sideMenuToggle"></div>
 		<div id="modal" hidden on-tap="sideMenuToggle"></div>
@@ -91,11 +91,12 @@
 				/**
 				 * menu element name
 				 * menu-element로 전달 받은 element를 생성하여 메뉴 리스트에 append 함
+				 * 값은 ,를 이용하여 여러개의 엘리먼트를 정의 할 수 있고 순서대로 vertical layout 아래에 생성됨
 				 * @type String
 				 */
-				menuElement: {
+				menuElements: {
 					type: String,
-					observer: '_menuElementChanged'
+					observer: '_menuElementsChanged'
 				},
 
 				/**
@@ -139,12 +140,16 @@
 			},
 
 			/**
-			 * menuElement의 값이 변경되면 호출하여 element를 생성하고 append
-			 * @param  String menuElement
+			 * menuElements의 값이 변경되면 호출하여 element를 생성하고 append
+			 * @param  String menuElements
 			 */
-			_menuElementChanged: function(menuElement) {
-				var menuElement = document.createElement(menuElement);
-				this.$['side-menu-container'].appendChild(menuElement);
+			_menuElementsChanged: function(menuElements) {
+				menuElements = menuElements.replace(/\s/g, '');
+				var menuElementsArray = menuElements.split(',');
+				menuElementsArray.forEach(function(menuElement) {
+					this.$['side-menu-container'].appendChild(document.createElement(menuElement));
+					menuElement
+				}.bind(this));
 			},
 
 			/**
@@ -164,6 +169,8 @@
 			 * 사이드 메뉴를 open하는 animation을 활성화
 			 */
 			open: function() {
+				var mainLayout = this.moveLayout ? document.querySelector('#' + this.layoutId) : '';
+
 				if(this.reverse) {
 					this.$['side-menu-container'].style.animationName = 'slide-reverse';
 					this.$['side-menu-container'].style.right = '0';
