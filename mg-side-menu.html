@@ -4,13 +4,14 @@
 	<template>
 		<style>
 			#side-menu-container {
-        background-image: url('./images/side_menu_back.png');
+				background: linear-gradient( to bottom, #595656, #403D3B );
         background-repeat: no-repeat;
         background-size: 100% 100%;
+        display: none;
 			}
 			.side-menu-container {
 				position: absolute;
-				z-index: 100;
+				z-index: 2;
 				background: white;
 				height: 100%;
 				width: 68vw;
@@ -20,7 +21,7 @@
 			}
 			.side-menu-container-reverse {
 				position: absolute;
-				z-index: 100;
+				z-index: 2;
 				background: white;
 				height: 100%;
 				width: 68vw;
@@ -32,7 +33,7 @@
 				position: absolute;
 				left: 0;
 				top: 0;
-				z-index: 99;
+				z-index: 1;
 				width: 100%;
 				height: 100%;
 				background-color: #000000;
@@ -69,7 +70,7 @@
 				to {
 					right: -100;
 				}
-			}
+			}			
 		</style>
 		<div id="side-menu-container" class$="[[containerClass]]" opened="[[opened]]" on-tap="sideMenuToggle"></div>
 		<div id="modal" hidden on-tap="sideMenuToggle"></div>
@@ -91,7 +92,6 @@
 				/**
 				 * menu element name
 				 * menu-element로 전달 받은 element를 생성하여 메뉴 리스트에 append 함
-				 * 값은 ,를 이용하여 여러개의 엘리먼트를 정의 할 수 있고 순서대로 vertical layout 아래에 생성됨
 				 * @type String
 				 */
 				menuElements: {
@@ -128,6 +128,13 @@
 				document.addEventListener('mg-side-menu-close', function() {
 					this.close();
 				}.bind(this));
+
+				document.addEventListener('animationend', function(event) {
+					var animationName = event.animationName;
+					if(animationName == 'slide-back' || animationName == 'slide-back-reverse') {
+						this.$['side-menu-container'].style.display = 'none';
+					}
+				}.bind(this));
 			},
 
 			/**
@@ -140,15 +147,13 @@
 			},
 
 			/**
-			 * menuElements의 값이 변경되면 호출하여 element를 생성하고 append
+			 * menuElement의 값이 변경되면 호출하여 element를 생성하고 append
 			 * @param  String menuElements
 			 */
 			_menuElementsChanged: function(menuElements) {
-				menuElements = menuElements.replace(/\s/g, '');
-				var menuElementsArray = menuElements.split(',');
-				menuElementsArray.forEach(function(menuElement) {
+				var menuElements = menuElements.split(',');
+				menuElements.forEach(function(menuElement) {
 					this.$['side-menu-container'].appendChild(document.createElement(menuElement));
-					menuElement
 				}.bind(this));
 			},
 
@@ -169,8 +174,6 @@
 			 * 사이드 메뉴를 open하는 animation을 활성화
 			 */
 			open: function() {
-				var mainLayout = this.moveLayout ? document.querySelector('#' + this.layoutId) : '';
-
 				if(this.reverse) {
 					this.$['side-menu-container'].style.animationName = 'slide-reverse';
 					this.$['side-menu-container'].style.right = '0';
@@ -178,6 +181,7 @@
 					this.$['side-menu-container'].style.animationName = 'slide';
 					this.$['side-menu-container'].style.left = '0';
 				}
+				this.$['side-menu-container'].style.display = 'block'
 				this.opened = true;
 			},
 
